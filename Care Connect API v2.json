@@ -1,0 +1,1114 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is the Urgent and Emergency Care Booking API, you can find out more at the\n    [NHS Digital API Hub](https://developer.nhs.uk/apis/uec-appointments)",
+    "version": "2.0.0",
+    "title": "Care Connect API",
+    "termsOfService": "https://developer.nhs.uk/apis/uec-appointments",
+    "contact": {
+      "email": "uec.appointmentbooking@nhs.net",
+      "url": "https://developer.nhs.uk/apis/uec-appointments",
+      "name": "NHS Digital"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dev-uae.api.nhs.uk/v2/",
+      "description": "Dev"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Appointment",
+      "description": "A booking of a healthcare event"
+    },
+    {
+      "name": "Slot",
+      "description": "A Slot into which an Appointment can be booked",
+      "externalDocs": {
+        "url": "https://developer.nhs.uk/apis/nhsbooking-2.0.0-beta/search_free_slots.html"
+      }
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    },
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/slot": {
+      "get": {
+        "tags": [
+          "Slot"
+        ],
+        "summary": "Search for free slots",
+        "description": "Search for free slots based on the criteria provided",
+        "externalDocs": {
+          "url": "https://developer.nhs.uk/apis/nhsbooking-2.0.0-beta/search_free_slots.html"
+        },
+        "operationId": "getSlots",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "healthcareService",
+            "description": "The  service id of the service for which Slots are being requested",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status values that need to be considered for filter",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "busy"
+                ],
+                "default": "free"
+              }
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "description": "Slot end date/time (yyyy-mm-ddThh:mm:ss+hh:mm)\n\n__Start and end represent the definition of the time window within which Slots must start__\n",
+            "schema": {
+              "format": "datetime",
+              "type": "string",
+              "example": "2020-03-31T14:00:00"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "description": "Slot end date/time (yyyy-mm-ddThh:mm:ss+hh:mm)\n\n__Start and end represent the definition of the time window within which Slots must start__\n",
+            "schema": {
+              "format": "datetime",
+              "type": "string",
+              "example": "2020-03-31T16:00:00"
+            }
+          },
+          {
+            "name": "inclusions",
+            "in": "query",
+            "description": "Inclusions that drive the rescusive depth of the search\n\n|Inclusion           |Description|\n|-------             | --------|\n| Schedule           | Include Schedule Resources referenced within the returned Slot Resources|\n| Practitioner       | Include Schedule Resources referenced within the returned Slot Resources|\n| PractitionerRole   | Include Schedule Resources referenced within the returned Slot Resources|\n| HealthcareService  | Include Schedule Resources referenced within the returned Slot Resources|\n| ProvidedBy         | Include Schedule Resources referenced within the returned Slot Resources|\n| Location           | Include Schedule Resources referenced within the returned Slot Resources|\n",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Schedule",
+                  "Practitioner",
+                  "PractitionerRole",
+                  "HealthcareService",
+                  "ProvidedBy",
+                  "Location"
+                ]
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Integer representing the maximum number of data items to return in this request",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "format": "int32"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Integer representing how many data items to skip over. If offset is not specified it defaults to 1; i.e. the first item of data at the beginning of the result set.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/fhir+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SlotJSON"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Get a specific appointment",
+        "description": "Get a specific appointment",
+        "operationId": "getAppointment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "appointmentId",
+            "description": "The identifier of the Appointment.",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/fhir+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentJSON"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}/history/{versionId}": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Get the specific version of an appointment",
+        "description": "Get the specific version of an appointment",
+        "operationId": "getAppointmentVersion",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "appointmentId",
+            "description": "TThe identifier of the Appointment.",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          },
+          {
+            "name": "versionId",
+            "description": "The version identifier for the Appointment are being requested.",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": 2
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/fhir+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentJSON"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}/@register": {
+      "post": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Register an appointment in the central registery",
+        "description": "Register an appointment in the central registery",
+        "operationId": "registerAppointment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "appointmentId",
+            "description": "TThe identifier of the Appointment.",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}/@unregister": {
+      "put": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Unregister an appointment in the central registery",
+        "description": "unregister an appointment in the central registery",
+        "operationId": "unregisterAppointment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "appointmentId",
+            "description": "TThe identifier of the Appointment.",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucess"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}/@cancel": {
+      "put": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Cancels an appointment",
+        "description": "Cancels an appointment",
+        "operationId": "cancelAppointment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "appointmentId",
+            "description": "TThe identifier of the Appointment.",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucess"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment": {
+      "get": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Get the appointments for a sepecific patient",
+        "description": "Get the appointments for a sepecific patient",
+        "operationId": "getAppointments",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          },
+          {
+            "name": "patientId",
+            "description": "The national service identifier of the Patient for whom Appointments are being requested.",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Appointment status values should be included in the result set",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "busy"
+                ],
+                "default": "free"
+              }
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Point in time to search from (yyyy-mm-ddThh:mm:ss+hh:mm)",
+            "schema": {
+              "format": "datetime",
+              "type": "string",
+              "example": "2020-03-31T14:00:00"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Point in time to search to (yyyy-mm-ddThh:mm:ss+hh:mm)",
+            "schema": {
+              "format": "datetime",
+              "type": "string",
+              "example": "2020-03-31T16:00:00"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/fhir+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppointmentJSON"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Appointment"
+        ],
+        "summary": "Create an appointment for a sepecific patient",
+        "description": "Craete an appointment for a sepecific patient",
+        "operationId": "createAppointment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorisation_Param"
+          }
+        ],
+        "requestBody": {
+          "description": "Appointment Deatils",
+          "required": true,
+          "content": {
+            "application/fhir+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentJSON"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Ssp-TraceIDParam": {
+        "deprecated": false,
+        "name": "Ssp-TraceID",
+        "description": "Consumer trace identifier\n",
+        "schema": {
+          "type": "string",
+          "example": "09a01679-2564-0fb4-5129-aecc81ea2706"
+        },
+        "in": "header",
+        "required": true
+      },
+      "Ssp-FromParam": {
+        "deprecated": false,
+        "example": 200000000359,
+        "name": "Ssp-From",
+        "description": "Consumer ASID   ",
+        "schema": {
+          "type": "string",
+          "example": 200000000359
+        },
+        "in": "header",
+        "required": true,
+        "x-last-modified": 1605027259149
+      },
+      "Ssp-ToParam": {
+        "deprecated": false,
+        "example": 918999198993,
+        "name": "Ssp-To",
+        "description": "Provider ASID ",
+        "schema": {
+          "type": "string",
+          "example": 918999198993
+        },
+        "in": "header",
+        "required": true,
+        "x-last-modified": 1605017373138
+      },
+      "Ssp-InteractionIDParam": {
+        "deprecated": false,
+        "example": " urn:nhs:names:services:careconnect:fhir:rest:read:metadata-1 ",
+        "name": "Ssp-InteractionID",
+        "description": "SDS interaction identifier",
+        "schema": {
+          "type": "string",
+          "example": " urn:nhs:names:services:careconnect:fhir:rest:read:metadata-1 "
+        },
+        "in": "header",
+        "required": true,
+        "x-last-modified": 1605017420745
+      },
+      "Authorisation_Param": {
+        "name": "authorisationToken",
+        "in": "header",
+        "description": "JWT authorisation header parameter",
+        "schema": {
+          "type": "string",
+          "example": "{todo: Create example JWT}"
+        },
+        "required": true
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "Illegal input for operation.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized access.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Entity not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Forbidden.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "properties": {
+          "httpResponseCode": {
+            "description": "HTTP resonse code of the error.",
+            "type": "integer"
+          },
+          "errorCode": {
+            "description": "Unique error code for documentation reference.",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description": "Brief description of the error.",
+            "type": "string"
+          },
+          "errorMoreInfo": {
+            "description": "Documentation link for reference.",
+            "type": "string"
+          }
+        }
+      },
+      "SlotJSON": {
+        "type": "string",
+        "example": {
+          "resourceType": "Bundle",
+          "id": "a56382a1-dce2-483a-8426-65b727b66809",
+          "meta": {
+            "lastUpdated": "2019-05-09T09:26:12.010+00:00"
+          },
+          "type": "searchset",
+          "total": 8,
+          "link": [
+            {
+              "relation": "self",
+              "url": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Slot?_format=json&_include=Slot%3Aschedule&_include=Schedule%3Aactor%3APractitioner&_include=Schedule%3Aactor%3APractitionerRole&_include=Schedule%3Aactor%3AHealthcareService&_include=HealthcareService.location&schedule.actor%3Ahealthcareservice=918999198999&start=ge2019-05-09T10%3A00%3A00%2000%3A00&start=le2019-05-09T10%3A30%3A00%2000%3A00&status=free"
+            }
+          ],
+          "entry": [
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Slot/slot005",
+              "resource": {
+                "resourceType": "Slot",
+                "id": "slot005",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Slot-1"
+                  ]
+                },
+                "identifier": [
+                  {
+                    "system": "https://tools.ietf.org/html/rfc4122",
+                    "value": "5a889965-3db4-4c29-8003-676c247a763e"
+                  }
+                ],
+                "schedule": {
+                  "reference": "Schedule/sched1111"
+                },
+                "status": "free",
+                "start": "2019-05-09T10:00:00.000+00:00",
+                "end": "2019-05-09T10:15:00.000+00:00"
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Slot/slot006",
+              "resource": {
+                "resourceType": "Slot",
+                "id": "slot006",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Slot-1"
+                  ]
+                },
+                "identifier": [
+                  {
+                    "system": "https://tools.ietf.org/html/rfc4122",
+                    "value": "d939f0e0-d434-4962-a327-7ed52fde2b2e"
+                  }
+                ],
+                "schedule": {
+                  "reference": "Schedule/sched1111"
+                },
+                "status": "free",
+                "start": "2019-05-09T10:15:00.000+00:00",
+                "end": "2019-05-09T10:30:00.000+00:00"
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Slot/slot007",
+              "resource": {
+                "resourceType": "Slot",
+                "id": "slot007",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Slot-1"
+                  ]
+                },
+                "identifier": [
+                  {
+                    "system": "https://tools.ietf.org/html/rfc4122",
+                    "value": "50360c34-c1e0-42dd-b965-8e4dd79ed902"
+                  }
+                ],
+                "schedule": {
+                  "reference": "Schedule/sched1111"
+                },
+                "status": "free",
+                "start": "2019-05-09T10:30:00.000+00:00",
+                "end": "2019-05-09T10:45:00.000+00:00"
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Schedule/sched1111",
+              "resource": {
+                "resourceType": "Schedule",
+                "id": "sched1111",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Schedule-1"
+                  ]
+                },
+                "identifier": [
+                  {
+                    "system": "https://system.supplier.co.uk/MyDiary/Numbering",
+                    "value": "1015432"
+                  }
+                ],
+                "actor": [
+                  {
+                    "reference": "HealthcareService/918999198999"
+                  },
+                  {
+                    "reference": "Practitioner/ABCD123456"
+                  }
+                ]
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/HealthcareService/918999198999",
+              "resource": {
+                "resourceType": "HealthcareService",
+                "id": "918999198999",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-HealthcareService-1"
+                  ]
+                },
+                "identifier": [
+                  {
+                    "system": "https://system.supplier.co.uk/My/Services",
+                    "value": "357"
+                  }
+                ],
+                "providedBy": {
+                  "reference": "https://directory.spineservices.nhs.uk/STU3/Organization/RR8"
+                },
+                "location": [
+                  {
+                    "reference": "Location/loc2222"
+                  }
+                ],
+                "name": "Service One"
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Practitioner/ABCD123456",
+              "resource": {
+                "resourceType": "Practitioner",
+                "id": "ABCD123456",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Practitioner-1"
+                  ]
+                },
+                "identifier": [
+                  {
+                    "system": "https://fhir.nhs.uk/Id/sds-user-id",
+                    "value": "ABCD123456"
+                  },
+                  {
+                    "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
+                    "value": "R0260"
+                  }
+                ],
+                "name": [
+                  {
+                    "family": "Webber",
+                    "given": [
+                      "Libbie"
+                    ],
+                    "prefix": [
+                      "Dr"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/PractitionerRole/R0260",
+              "resource": {
+                "resourceType": "PractitionerRole",
+                "id": "R0260",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-PractitionerRole-1"
+                  ]
+                },
+                "code": [
+                  {
+                    "coding": [
+                      {
+                        "system": "https://fhir.hl7.org.uk/STU3/CodeSystem/CareConnect-SDSJobRoleName-1",
+                        "code": "R0260",
+                        "display": "General Medical Practitioner"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "fullUrl": "http://a2sibookingprovidertest.directoryofservices.nhs.uk:443/poc/Location/loc1111",
+              "resource": {
+                "resourceType": "Location",
+                "id": "loc1111",
+                "meta": {
+                  "profile": [
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Location-1"
+                  ]
+                },
+                "name": "Location One"
+              }
+            }
+          ]
+        }
+      },
+      "AppointmentJSON": {
+        "type": "string",
+        "example": {
+          "resourceType": "Appointment",
+          "id": "cfd9eba2-cc66-4195-a70c-10112ab1c838",
+          "meta": {
+            "versionId": "2",
+            "profile": [
+              "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Appointment-1"
+            ]
+          },
+          "language": "en",
+          "text": {
+            "status": "generated",
+            "div": "Appointment"
+          },
+          "contained": [
+            {
+              "resourceType": "DocumentReference",
+              "id": "123",
+              "meta": {
+                "profile": [
+                  "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-DocumentReference-1"
+                ]
+              },
+              "identifier": [
+                {
+                  "system": "https://tools.ietf.org/html/rfc4122",
+                  "value": "6b9c59dd-675b-4026-98db-f608ef501e6e"
+                }
+              ],
+              "status": "current",
+              "type": {
+                "coding": [
+                  {
+                    "system": "urn:oid:2.16.840.1.113883.2.1.3.2.4.18.17",
+                    "code": "POCD_MT200001GB02",
+                    "display": "Integrated Urgent Care Report"
+                  }
+                ]
+              },
+              "indexed": "2018-12-20T09:43:41+11:00",
+              "content": [
+                {
+                  "attachment": {
+                    "contentType": "application/hl7-v3+xml",
+                    "language": "en"
+                  }
+                }
+              ]
+            },
+            {
+              "resourceType": "Patient",
+              "id": "P1",
+              "meta": {
+                "profile": [
+                  "https://fhir.hl7.org.uk/STU3/StructureDefinition/CareConnect-Patient-1"
+                ]
+              },
+              "identifier": [
+                {
+                  "extension": [
+                    {
+                      "url": "https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-NHSNumberVerificationStatus-1",
+                      "valueCodeableConcept": {
+                        "coding": [
+                          {
+                            "system": "https://fhir.hl7.org.uk/STU3/CodeSystem/CareConnect-NHSNumberVerificationStatus-1",
+                            "code": "01",
+                            "display": "Number present and verified"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "use": "official",
+                  "system": "https://fhir.nhs.uk/Id/nhs-number",
+                  "value": "1234554321"
+                }
+              ],
+              "name": [
+                {
+                  "use": "official",
+                  "family": "Chalmers",
+                  "given": [
+                    "Peter"
+                  ],
+                  "prefix": [
+                    "Mr"
+                  ]
+                }
+              ],
+              "telecom": [
+                {
+                  "system": "phone",
+                  "value": "01234 567 890",
+                  "use": "home",
+                  "rank": 1
+                }
+              ],
+              "gender": "male",
+              "birthDate": "1974-12-25",
+              "address": [
+                {
+                  "use": "home",
+                  "text": "123 High Street, Leeds LS1 4HR",
+                  "line": [
+                    "123 High Street",
+                    "Leeds"
+                  ],
+                  "city": "Leeds",
+                  "postalCode": "LS1 4HR"
+                }
+              ]
+            },
+            {
+              "resourceType": "Slot",
+              "id": "slot002",
+              "identifier": [
+                {
+                  "system": "https://tools.ietf.org/html/rfc4122",
+                  "value": "1db79eb3-72f8-4569-a8dc-af8759797e0f"
+                }
+              ],
+              "schedule": {
+                "reference": "Schedule/sched1111"
+              },
+              "status": "busy",
+              "start": "2019-01-17T15:00:00.000Z",
+              "end": "2019-01-17T15:30:00.000Z"
+            }
+          ],
+          "status": "booked",
+          "description": "Reason for calling",
+          "supportingInformation": [
+            {
+              "reference": "#123"
+            }
+          ],
+          "start": "2019-01-17T15:00:00.000Z",
+          "end": "2019-01-17T15:10:00.000Z",
+          "slot": [
+            {
+              "reference": "#slot002"
+            }
+          ],
+          "created": "2019-01-17T14:32:22.579+00:00",
+          "participant": [
+            {
+              "actor": {
+                "reference": "#P1",
+                "identifier": {
+                  "use": "official",
+                  "system": "https://fhir.nhs.uk/Id/nhs-number",
+                  "value": "1234554321"
+                },
+                "display": "Peter James Chalmers"
+              },
+              "status": "accepted"
+            }
+          ]
+        }
+      }
+    },
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "ApiKey": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  }
+}
