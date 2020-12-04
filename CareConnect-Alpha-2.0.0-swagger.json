@@ -155,7 +155,7 @@
         }, {
           "name" : "inclusions",
           "in" : "query",
-          "description" : "Inclusions that drive the rescusive depth of the search\n\n|Inclusion           |Description|\n|-------             | --------|\n| Schedule           | Include Schedule Resources referenced within the returned Slot Resources|\n| Practitioner       | Include Schedule Resources referenced within the returned Slot Resources|\n| PractitionerRole   | Include Schedule Resources referenced within the returned Slot Resources|\n| HealthcareService  | Include Schedule Resources referenced within the returned Slot Resources|\n| ProvidedBy         | Include Schedule Resources referenced within the returned Slot Resources|\n| Location           | Include Schedule Resources referenced within the returned Slot Resources|\n",
+          "description" : "Inclusions that drive the rescusive depth of the search\n\n|Inclusion           |Description|\n|-------             | --------|\n| Schedule           | Include Schedule Resources referenced within the returned Slot Resources|\n| Practitioner       | Include Practitioner Resources referenced within the returned Schedule Resources|\n| PractitionerRole   | Include Practitioner Role Resources referenced within the returned Schedule Resources |\n| HealthcareService  | Include HealthcareService Resources referenced within the returned Schedule Resources|\n| ProvidedBy         | Include Organization Resources referenced within the returned HealthcareService Resources|\n| Location           | Include Location Resources referenced within the returned HealthcareService Resources|\n",
           "required" : true,
           "explode" : true,
           "schema" : {
@@ -164,26 +164,6 @@
               "type" : "string",
               "enum" : [ "Schedule", "Practitioner", "PractitionerRole", "HealthcareService", "ProvidedBy", "Location" ]
             }
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "Integer representing the maximum number of data items to return in this request",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "default" : 10,
-            "format" : "int32"
-          }
-        }, {
-          "name" : "offset",
-          "in" : "query",
-          "description" : "Integer representing how many data items to skip over. If offset is not specified it defaults to 1; i.e. the first item of data at the beginning of the result set.",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "default" : 0,
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -571,7 +551,7 @@
         "content" : {
           "application/json" : {
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/OperationalOutcome"
             }
           }
         }
@@ -581,7 +561,7 @@
         "content" : {
           "application/json" : {
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/OperationalOutcome"
             }
           }
         }
@@ -591,7 +571,7 @@
         "content" : {
           "application/json" : {
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/OperationalOutcome"
             }
           }
         }
@@ -601,7 +581,7 @@
         "content" : {
           "application/json" : {
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/OperationalOutcome"
             }
           }
         }
@@ -618,26 +598,6 @@
       }
     },
     "schemas" : {
-      "ErrorResponse" : {
-        "properties" : {
-          "httpResponseCode" : {
-            "description" : "HTTP resonse code of the error.",
-            "type" : "integer"
-          },
-          "errorCode" : {
-            "description" : "Unique error code for documentation reference.",
-            "type" : "string"
-          },
-          "errorMessage" : {
-            "description" : "Brief description of the error.",
-            "type" : "string"
-          },
-          "errorMoreInfo" : {
-            "description" : "Documentation link for reference.",
-            "type" : "string"
-          }
-        }
-      },
       "OperationalOutcome" : {
         "type" : "object",
         "example" : {

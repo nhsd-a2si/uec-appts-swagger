@@ -147,11 +147,11 @@ paths:
             |Inclusion           |Description|
             |-------             | --------|
             | Schedule           | Include Schedule Resources referenced within the returned Slot Resources|
-            | Practitioner       | Include Schedule Resources referenced within the returned Slot Resources|
-            | PractitionerRole   | Include Schedule Resources referenced within the returned Slot Resources|
-            | HealthcareService  | Include Schedule Resources referenced within the returned Slot Resources|
-            | ProvidedBy         | Include Schedule Resources referenced within the returned Slot Resources|
-            | Location           | Include Schedule Resources referenced within the returned Slot Resources|
+            | Practitioner       | Include Practitioner Resources referenced within the returned Schedule Resources|
+            | PractitionerRole   | Include Practitioner Role Resources referenced within the returned Schedule Resources |
+            | HealthcareService  | Include HealthcareService Resources referenced within the returned Schedule Resources|
+            | ProvidedBy         | Include Organization Resources referenced within the returned HealthcareService Resources|
+            | Location           | Include Location Resources referenced within the returned HealthcareService Resources|
             
 
 
@@ -168,24 +168,8 @@ paths:
                 - HealthcareService
                 - ProvidedBy
                 - Location
-        
-        - name : limit
-          in: query
-          description: Integer representing the maximum number of data items to return in this request
-          required: false
-          schema:
-            type: integer
-            default: 10
-            format: int32
-        
-        - name: offset
-          in: query
-          description: Integer representing how many data items to skip over. If offset is not specified it defaults to 1; i.e. the first item of data at the beginning of the result set.
-          required: false
-          schema:
-            type: integer
-            default: 0
-            format: int32
+      
+    
               
       responses:
         '200':
@@ -512,7 +496,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/OperationalOutcome'
             
 
     '401':
@@ -521,21 +505,21 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/OperationalOutcome'
 
     '403':
       description: Entity not found.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/OperationalOutcome'
 
     '404':
       description: Forbidden.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/OperationalOutcome'
         
     '500':
       description: Server Error
@@ -547,20 +531,6 @@ components:
             
             
   schemas:
-    ErrorResponse:
-      properties:
-        httpResponseCode:
-          description: HTTP resonse code of the error.
-          type: integer
-        errorCode:
-          description: Unique error code for documentation reference.
-          type: string
-        errorMessage:
-          description: Brief description of the error.
-          type: string
-        errorMoreInfo:
-          description: Documentation link for reference.
-          type: string
     
     OperationalOutcome:
       type: object
