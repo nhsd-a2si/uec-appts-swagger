@@ -21,6 +21,8 @@ tags:
     description: ''
   - name: Appointment
     description: A booking of a healthcare event
+    externalDocs:
+      url: https://developer.nhs.uk/apis/nhsbooking-2.0.0-beta/book_an_appointment.html
   - name: Slot
     description: A Slot into which an Appointment can be booked
     externalDocs:
@@ -32,6 +34,15 @@ security:
   
 paths:
   /metadata:
+
+    #Common parameters for /metadata
+    parameters:
+    - $ref: '#/components/parameters/Ssp-TraceIDParam'
+    - $ref: '#/components/parameters/Ssp-FromParam'
+    - $ref: '#/components/parameters/Ssp-ToParam'
+    - $ref: '#/components/parameters/Ssp-InteractionIDParam'
+    - $ref: '#/components/parameters/Authorisation_Param'
+    
     get:
       tags:
         - Foundation
@@ -40,12 +51,7 @@ paths:
 
         
       operationId: getMetaData
-      parameters:
-        - $ref: '#/components/parameters/Ssp-TraceIDParam'
-        - $ref: '#/components/parameters/Ssp-FromParam'
-        - $ref: '#/components/parameters/Ssp-ToParam'
-        - $ref: '#/components/parameters/Ssp-InteractionIDParam'
-        - $ref: '#/components/parameters/Authorisation_Param'
+
 
       responses:
         '200':
@@ -73,6 +79,13 @@ paths:
 
 
   /slot:
+    parameters:
+      - $ref: '#/components/parameters/Ssp-TraceIDParam'
+      - $ref: '#/components/parameters/Ssp-FromParam'
+      - $ref: '#/components/parameters/Ssp-ToParam'
+      - $ref: '#/components/parameters/Ssp-InteractionIDParam'
+      - $ref: '#/components/parameters/Authorisation_Param'  
+  
     get:
       tags:
         - Slot
@@ -84,13 +97,6 @@ paths:
       operationId: getSlots
       
       parameters:
-        
-        - $ref: '#/components/parameters/Ssp-TraceIDParam'
-        - $ref: '#/components/parameters/Ssp-FromParam'
-        - $ref: '#/components/parameters/Ssp-ToParam'
-        - $ref: '#/components/parameters/Ssp-InteractionIDParam'
-        - $ref: '#/components/parameters/Authorisation_Param'
-    
         - name: healthcareService
           description: The  service id of the service for which Slots are being requested
           in: query
@@ -146,12 +152,12 @@ paths:
     
             |Inclusion           |Description|
             |-------             | --------|
-            | Schedule           | Include Schedule Resources referenced within the returned Slot Resources|
-            | Practitioner       | Include Practitioner Resources referenced within the returned Schedule Resources|
-            | PractitionerRole   | Include Practitioner Role Resources referenced within the returned Schedule Resources |
-            | HealthcareService  | Include HealthcareService Resources referenced within the returned Schedule Resources|
-            | ProvidedBy         | Include Organization Resources referenced within the returned HealthcareService Resources|
-            | Location           | Include Location Resources referenced within the returned HealthcareService Resources|
+            | Schedule           | Include Schedule Resources referenced within the  Slot Resources|
+            | Practitioner       | Include Practitioner Resources referenced within the  Schedule Resources|
+            | PractitionerRole   | Include Practitioner Role Resources referenced within the  Schedule Resources |
+            | HealthcareService  | Include HealthcareService Resources referenced within the  Schedule Resources|
+            | ProvidedBy         | Include Organization Resources referenced within the  HealthcareService Resources|
+            | Location           | Include Location Resources referenced within the  HealthcareService Resources|
             
 
 
@@ -195,101 +201,16 @@ paths:
         '500':
           $ref: '#/components/responses/500'  
           
-
-  /appointment/{appointmentId}:
-    get:
-    
-      tags:
-        - Appointment
-      summary: Get a specific appointment 
-      description: Get a specific appointment 
-
-        
-      operationId: getAppointment
-      parameters:
-        - $ref: '#/components/parameters/Ssp-TraceIDParam'
-        - $ref: '#/components/parameters/Ssp-FromParam'
-        - $ref: '#/components/parameters/Ssp-ToParam'
-        - $ref: '#/components/parameters/Ssp-InteractionIDParam'
-        - $ref: '#/components/parameters/Authorisation_Param'
-        - $ref: '#/components/parameters/Appointment_Param'
-
-      responses:
-        '200':
-          description: Success
-          content:
-            application/fhir+json:
-              schema:
-                $ref: '#/components/schemas/Appointment'
-          
-            application/fhir+xml:
-              schema:
-                $ref: '#/components/schemas/Appointment'
-
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'  
-          
-
-  /appointment/{appointmentId}/history/{versionId}:
-    get:
-      tags:
-        - Appointment
-      summary: Get the specific version of an appointment 
-      description: Get the specific version of an appointment
-
-        
-      operationId: getAppointmentVersion
-      parameters:
-        - $ref: '#/components/parameters/Ssp-TraceIDParam'
-        - $ref: '#/components/parameters/Ssp-FromParam'
-        - $ref: '#/components/parameters/Ssp-ToParam'
-        - $ref: '#/components/parameters/Ssp-InteractionIDParam'
-        - $ref: '#/components/parameters/Authorisation_Param'
-        - $ref: '#/components/parameters/Appointment_Param'
-          
-        - name: versionId
-          description: The version identifier for the Appointment are being requested.
-
-          in: path
-          schema:
-            type: string
-            example: 2
-          required: true
-          allowEmptyValue: false
-
-      responses:
-        '200':
-          description: Success
-          content:
-            application/fhir+json:
-              schema:
-                $ref: '#/components/schemas/Appointment'
-            application/fhir+xml:
-              schema:
-                $ref: '#/components/schemas/Appointment'
-
-
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'  
-          
-   
   /appointment:
+    
+    #Common parameters for /appointment
+    parameters:
+      - $ref: '#/components/parameters/Ssp-TraceIDParam'
+      - $ref: '#/components/parameters/Ssp-FromParam'
+      - $ref: '#/components/parameters/Ssp-ToParam'
+      - $ref: '#/components/parameters/Ssp-InteractionIDParam'
+      - $ref: '#/components/parameters/Authorisation_Param'
+    
     get:
       tags:
         - Appointment
@@ -299,13 +220,6 @@ paths:
         
       operationId: getAppointments
       parameters:
-        - $ref: '#/components/parameters/Ssp-TraceIDParam'
-        - $ref: '#/components/parameters/Ssp-FromParam'
-        - $ref: '#/components/parameters/Ssp-ToParam'
-        - $ref: '#/components/parameters/Ssp-InteractionIDParam'
-        - $ref: '#/components/parameters/Authorisation_Param'
-
-        
         - name: patientId
           description: The national service identifier of the Patient for whom Appointments are being requested.
 
@@ -385,13 +299,6 @@ paths:
       description: Craete an appointment for a sepecific patient 
       operationId: createAppointment
       
-      parameters: 
-        - $ref: '#/components/parameters/Ssp-TraceIDParam'
-        - $ref: '#/components/parameters/Ssp-FromParam'
-        - $ref: '#/components/parameters/Ssp-ToParam'
-        - $ref: '#/components/parameters/Ssp-InteractionIDParam'
-        - $ref: '#/components/parameters/Authorisation_Param'
-    
       requestBody:
         description: Appointment Deatils
         required: true
@@ -418,6 +325,108 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'  
+  /appointment/{appointmentId}:
+  
+    #Common parameters for /appointment/(appointmentId)
+    parameters:
+      - $ref: '#/components/parameters/Ssp-TraceIDParam'
+      - $ref: '#/components/parameters/Ssp-FromParam'
+      - $ref: '#/components/parameters/Ssp-ToParam'
+      - $ref: '#/components/parameters/Ssp-InteractionIDParam'
+      - $ref: '#/components/parameters/Authorisation_Param'
+  
+  
+    get:
+      tags:
+        - Appointment
+      summary: Get a specific appointment 
+      description: Get a specific appointment 
+
+        
+      operationId: getAppointment
+      parameters:
+        - $ref: '#/components/parameters/Appointment_Param'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          
+            application/fhir+xml:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'  
+          
+
+  /appointment/{appointmentId}/history/{versionId}:
+    #Common parameters for /appointment/(appointmentId)/history
+    parameters:
+      - $ref: '#/components/parameters/Ssp-TraceIDParam'
+      - $ref: '#/components/parameters/Ssp-FromParam'
+      - $ref: '#/components/parameters/Ssp-ToParam'
+      - $ref: '#/components/parameters/Ssp-InteractionIDParam'
+      - $ref: '#/components/parameters/Authorisation_Param'
+  
+  
+    get:
+      tags:
+        - Appointment
+      summary: Get the specific version of an appointment 
+      description: Get the specific version of an appointment
+
+        
+      operationId: getAppointmentVersion
+      parameters:
+        - $ref: '#/components/parameters/Appointment_Param'
+          
+        - name: versionId
+          description: The version identifier for the Appointment are being requested.
+
+          in: path
+          schema:
+            type: string
+            example: 2
+          required: true
+          allowEmptyValue: false
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+            application/fhir+xml:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+
+
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'  
+          
+   
+
 
             
             

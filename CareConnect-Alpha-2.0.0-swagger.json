@@ -24,7 +24,10 @@
     "description" : ""
   }, {
     "name" : "Appointment",
-    "description" : "A booking of a healthcare event"
+    "description" : "A booking of a healthcare event",
+    "externalDocs" : {
+      "url" : "https://developer.nhs.uk/apis/nhsbooking-2.0.0-beta/book_an_appointment.html"
+    }
   }, {
     "name" : "Slot",
     "description" : "A Slot into which an Appointment can be booked",
@@ -39,22 +42,22 @@
   } ],
   "paths" : {
     "/metadata" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/Ssp-TraceIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-FromParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-ToParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Authorisation_Param"
+      } ],
       "get" : {
         "tags" : [ "Foundation" ],
         "summary" : "Get the FHIR capability statement",
         "description" : "Get the FHIR capability statement",
         "operationId" : "getMetaData",
-        "parameters" : [ {
-          "$ref" : "#/components/parameters/Ssp-TraceIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-FromParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-ToParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Authorisation_Param"
-        } ],
         "responses" : {
           "200" : {
             "description" : "Success",
@@ -90,6 +93,17 @@
       }
     },
     "/slot" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/Ssp-TraceIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-FromParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-ToParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Authorisation_Param"
+      } ],
       "get" : {
         "tags" : [ "Slot" ],
         "summary" : "Search for free slots",
@@ -99,16 +113,6 @@
         },
         "operationId" : "getSlots",
         "parameters" : [ {
-          "$ref" : "#/components/parameters/Ssp-TraceIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-FromParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-ToParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Authorisation_Param"
-        }, {
           "name" : "healthcareService",
           "description" : "The  service id of the service for which Slots are being requested",
           "in" : "query",
@@ -155,7 +159,7 @@
         }, {
           "name" : "inclusions",
           "in" : "query",
-          "description" : "Inclusions that drive the rescusive depth of the search\n\n|Inclusion           |Description|\n|-------             | --------|\n| Schedule           | Include Schedule Resources referenced within the returned Slot Resources|\n| Practitioner       | Include Practitioner Resources referenced within the returned Schedule Resources|\n| PractitionerRole   | Include Practitioner Role Resources referenced within the returned Schedule Resources |\n| HealthcareService  | Include HealthcareService Resources referenced within the returned Schedule Resources|\n| ProvidedBy         | Include Organization Resources referenced within the returned HealthcareService Resources|\n| Location           | Include Location Resources referenced within the returned HealthcareService Resources|\n",
+          "description" : "Inclusions that drive the rescusive depth of the search\n\n|Inclusion           |Description|\n|-------             | --------|\n| Schedule           | Include Schedule Resources referenced within the  Slot Resources|\n| Practitioner       | Include Practitioner Resources referenced within the  Schedule Resources|\n| PractitionerRole   | Include Practitioner Role Resources referenced within the  Schedule Resources |\n| HealthcareService  | Include HealthcareService Resources referenced within the  Schedule Resources|\n| ProvidedBy         | Include Organization Resources referenced within the  HealthcareService Resources|\n| Location           | Include Location Resources referenced within the  HealthcareService Resources|\n",
           "required" : true,
           "explode" : true,
           "schema" : {
@@ -200,139 +204,24 @@
         }
       }
     },
-    "/appointment/{appointmentId}" : {
-      "get" : {
-        "tags" : [ "Appointment" ],
-        "summary" : "Get a specific appointment",
-        "description" : "Get a specific appointment",
-        "operationId" : "getAppointment",
-        "parameters" : [ {
-          "$ref" : "#/components/parameters/Ssp-TraceIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-FromParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-ToParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Authorisation_Param"
-        }, {
-          "$ref" : "#/components/parameters/Appointment_Param"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/fhir+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Appointment"
-                }
-              },
-              "application/fhir+xml" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Appointment"
-                }
-              }
-            }
-          },
-          "400" : {
-            "$ref" : "#/components/responses/400"
-          },
-          "401" : {
-            "$ref" : "#/components/responses/401"
-          },
-          "403" : {
-            "$ref" : "#/components/responses/403"
-          },
-          "404" : {
-            "$ref" : "#/components/responses/404"
-          },
-          "500" : {
-            "$ref" : "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/appointment/{appointmentId}/history/{versionId}" : {
-      "get" : {
-        "tags" : [ "Appointment" ],
-        "summary" : "Get the specific version of an appointment",
-        "description" : "Get the specific version of an appointment",
-        "operationId" : "getAppointmentVersion",
-        "parameters" : [ {
-          "$ref" : "#/components/parameters/Ssp-TraceIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-FromParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-ToParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Authorisation_Param"
-        }, {
-          "$ref" : "#/components/parameters/Appointment_Param"
-        }, {
-          "name" : "versionId",
-          "description" : "The version identifier for the Appointment are being requested.",
-          "in" : "path",
-          "schema" : {
-            "type" : "string",
-            "example" : 2
-          },
-          "required" : true,
-          "allowEmptyValue" : false
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/fhir+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Appointment"
-                }
-              },
-              "application/fhir+xml" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Appointment"
-                }
-              }
-            }
-          },
-          "400" : {
-            "$ref" : "#/components/responses/400"
-          },
-          "401" : {
-            "$ref" : "#/components/responses/401"
-          },
-          "403" : {
-            "$ref" : "#/components/responses/403"
-          },
-          "404" : {
-            "$ref" : "#/components/responses/404"
-          },
-          "500" : {
-            "$ref" : "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/appointment" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/Ssp-TraceIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-FromParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-ToParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Authorisation_Param"
+      } ],
       "get" : {
         "tags" : [ "Appointment" ],
         "summary" : "Get the appointments for a sepecific patient",
         "description" : "Get the appointments for a sepecific patient",
         "operationId" : "getAppointments",
         "parameters" : [ {
-          "$ref" : "#/components/parameters/Ssp-TraceIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-FromParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-ToParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Authorisation_Param"
-        }, {
           "name" : "patientId",
           "description" : "The national service identifier of the Patient for whom Appointments are being requested.",
           "in" : "query",
@@ -421,17 +310,6 @@
         "summary" : "Create an appointment for a sepecific patient",
         "description" : "Craete an appointment for a sepecific patient",
         "operationId" : "createAppointment",
-        "parameters" : [ {
-          "$ref" : "#/components/parameters/Ssp-TraceIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-FromParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-ToParam"
-        }, {
-          "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
-        }, {
-          "$ref" : "#/components/parameters/Authorisation_Param"
-        } ],
         "requestBody" : {
           "description" : "Appointment Deatils",
           "required" : true,
@@ -451,6 +329,124 @@
         "responses" : {
           "201" : {
             "description" : "Success"
+          },
+          "400" : {
+            "$ref" : "#/components/responses/400"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/401"
+          },
+          "403" : {
+            "$ref" : "#/components/responses/403"
+          },
+          "404" : {
+            "$ref" : "#/components/responses/404"
+          },
+          "500" : {
+            "$ref" : "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/Ssp-TraceIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-FromParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-ToParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Authorisation_Param"
+      } ],
+      "get" : {
+        "tags" : [ "Appointment" ],
+        "summary" : "Get a specific appointment",
+        "description" : "Get a specific appointment",
+        "operationId" : "getAppointment",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Appointment_Param"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/fhir+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Appointment"
+                }
+              },
+              "application/fhir+xml" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Appointment"
+                }
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#/components/responses/400"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/401"
+          },
+          "403" : {
+            "$ref" : "#/components/responses/403"
+          },
+          "404" : {
+            "$ref" : "#/components/responses/404"
+          },
+          "500" : {
+            "$ref" : "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}/history/{versionId}" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/Ssp-TraceIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-FromParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-ToParam"
+      }, {
+        "$ref" : "#/components/parameters/Ssp-InteractionIDParam"
+      }, {
+        "$ref" : "#/components/parameters/Authorisation_Param"
+      } ],
+      "get" : {
+        "tags" : [ "Appointment" ],
+        "summary" : "Get the specific version of an appointment",
+        "description" : "Get the specific version of an appointment",
+        "operationId" : "getAppointmentVersion",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Appointment_Param"
+        }, {
+          "name" : "versionId",
+          "description" : "The version identifier for the Appointment are being requested.",
+          "in" : "path",
+          "schema" : {
+            "type" : "string",
+            "example" : 2
+          },
+          "required" : true,
+          "allowEmptyValue" : false
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/fhir+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Appointment"
+                }
+              },
+              "application/fhir+xml" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Appointment"
+                }
+              }
+            }
           },
           "400" : {
             "$ref" : "#/components/responses/400"
